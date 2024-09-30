@@ -1,7 +1,7 @@
 It is entirely possible to assign a due date to a work order based on the work order priority using MaintainX's API. 
 In order to achieve this I created a Flask app in Python which has an endpoint callable by MaintainX's webhook on creation of a New Work Order. Please see other files in this folder for a look at my coding style and practices.
 
-The basic steps of my codes logic are as follows: 
+The basic steps of my code's logic are as follows: 
 
 1. Webhook Trigger:
 MaintainX triggers a webhook to my Flask application’s /set-priority endpoint whenever a new work order is created.
