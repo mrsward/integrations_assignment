@@ -42,5 +42,5 @@ I also created a software flow diagram to provide an in-depth look into the logi
 ### **Flow Diagram:**
 
 <p align="center">
-  <img src="Images/4.%20Software%20Flow%20Diagram.png" alt="Software Flow Diagram">
+  <img src="Images/4_software_flow_diagram.png" alt="Software Flow Diagram">
 </p>
