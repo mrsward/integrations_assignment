@@ -1,21 +1,19 @@
-import requests
 import os
-import sys
 import logging
-from datetime import datetime, timedelta
 from flask import Flask, request, jsonify, abort
+from typing import Tuple
 import hmac
 import hashlib
 from set_due_date import set_due_date_by_priority
 
 # Initialize Constants
 TOKEN = os.getenv("TOKEN")  # Retrieve the API token from environment variables
-WEBHOOK_SECRET = os.getenv('WEBHOOK_SECRET') # Retrieve webhook sectret from environment variables
+WEBHOOK_SECRET = os.getenv('WEBHOOK_SECRET') # Retrieve webhook secret from environment variables
 
 app = Flask(__name__)
 
 # This function verifies the signature in the webhook request
-def verify_signature(request):
+def verify_signature(request: Flask.request) -> bool:
     # Extract the timestamp and signatures from the header
     signature_header = request.headers.get('X-Signature')
     if not signature_header:
@@ -48,7 +46,7 @@ def verify_signature(request):
         return False
 
 @app.route('/set_priority', methods=['POST'])
-def set_priority():
+def set_priority() -> Tuple[dict, int]:
     # Verify signature coming from webhook
     if not verify_signature(request):
         return jsonify({'status': 'error', 'message': 'Invalid signature'}), 401

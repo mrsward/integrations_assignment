@@ -1,6 +1,7 @@
 import os
 import logging
 from flask import Flask, request, jsonify, abort
+from typing import Tuple
 import hmac
 import hashlib
 from field_name_mappings import PO_MAPPINGS
@@ -14,7 +15,7 @@ WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET") # Retrieve webhook secret from envi
 app = Flask(__name__)
 
 # This function verifies the signature in the webhook request
-def verify_signature(request):
+def verify_signature(request: Flask.request) -> bool:
     # Extract the timestamp and signatures from the header
     signature_header = request.headers.get('X-Signature')
     if not signature_header:
@@ -47,7 +48,7 @@ def verify_signature(request):
         return False
 
 @app.route('/po_created', methods=['POST'])
-def create_po():
+def create_po() -> Tuple[dict, int]:
     # Verify signature coming from webhook
     if not verify_signature(request):
         return jsonify({'status': 'error', 'message': 'Invalid signature'}), 401
@@ -61,7 +62,7 @@ def create_po():
     coupa_format_po = {PO_MAPPINGS[key]: value for key, value in new_po.items() if key in PO_MAPPINGS}
 
      # Calculate, and assign due date to work order
-    success = create_coupa_po(coupa_format_po)
+    success = create_coupa_po(po_id, coupa_format_po)
     
     # Craft response based on status of success
     if success:
@@ -78,7 +79,7 @@ def create_po():
         return jsonify(response), 400
 
 @app.route('/po_updated', methods=['POST'])
-def update_po():
+def update_po() -> Tuple[dict, int]:
     # Verify signature coming from webhook
     if not verify_signature(request):
         return jsonify({'status': 'error', 'message': 'Invalid signature'}), 401
@@ -92,7 +93,7 @@ def update_po():
     coupa_format_po = {PO_MAPPINGS[key]: value for key, value in new_po.items() if key in PO_MAPPINGS}
 
      # Calculate, and assign due date to work order
-    success = update_coupa_po(coupa_format_po)
+    success = update_coupa_po(po_id, coupa_format_po)
     
     # Craft response based on status of success
     if success:
@@ -109,7 +110,7 @@ def update_po():
         return jsonify(response), 400
     
 @app.route('/po_canceled', methods=['POST'])
-def cancel_po():
+def cancel_po() -> Tuple[dict, int]:
     # Verify signature coming from webhook
     if not verify_signature(request):
         return jsonify({'status': 'error', 'message': 'Invalid signature'}), 401
@@ -123,7 +124,7 @@ def cancel_po():
     coupa_format_po = {PO_MAPPINGS[key]: value for key, value in new_po.items() if key in PO_MAPPINGS}
 
      # Calculate, and assign due date to work order
-    success = cancel_coupa_po(coupa_format_po)
+    success = cancel_coupa_po(po_id, coupa_format_po)
     
     # Craft response based on status of success
     if success:
@@ -140,7 +141,7 @@ def cancel_po():
         return jsonify(response), 400
     
 @app.route('/po_completed', methods=['POST'])
-def close_po():
+def close_po() -> Tuple[dict, int]:
     # Verify signature coming from webhook
     if not verify_signature(request):
         return jsonify({'status': 'error', 'message': 'Invalid signature'}), 401
@@ -154,7 +155,7 @@ def close_po():
     coupa_format_po = {PO_MAPPINGS[key]: value for key, value in new_po.items() if key in PO_MAPPINGS}
 
      # Calculate, and assign due date to work order
-    success = close_coupa_po(coupa_format_po)
+    success = close_coupa_po(po_id, coupa_format_po)
     
     # Craft response based on status of success
     if success:

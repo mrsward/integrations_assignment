@@ -1,6 +1,7 @@
 import requests
 import os
 import logging
+from typing import Optional
 
 # Retrieve Coupa specific fields related to auth and using API
 COUPA_ID = os.getenv("COUPA_ID")
@@ -23,7 +24,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)  # Create a logger instance
 
-def get_access_token():
+def get_access_token() -> Optional[str]:
     auth_url = f"{BASE_URL}{AUTH_ENDPOINT}"
     headers = {
         "Content-Type": "application/x-www-form-urlencoded"
@@ -42,12 +43,12 @@ def get_access_token():
     else:
         response.raise_for_status()
 
-def create_coupa_po(po_id, po_body) -> bool:
+def create_coupa_po(po_id: int, po_body: dict) -> bool:
     # Authenticate with Coupa API
     try:
         token = get_access_token()
     except requests.HTTPError as e:
-        logger.error(f"HTTP error occurred: {e}")
+        logger.error(f"HTTP error occurred: {e}. Could not authenticate with Coupa API")
         return False
     
     # Define the URL for PO creation request
@@ -72,12 +73,12 @@ def create_coupa_po(po_id, po_body) -> bool:
         logger.error(f"Request exception occurred: {e}. Could not create Purchase Order {po_id} in Coupa")
         return False
 
-def update_coupa_po(po_id, po_body):
+def update_coupa_po(po_id: int, po_body: dict) -> bool:
      # Authenticate with Coupa API
     try:
         token = get_access_token()
     except requests.HTTPError as e:
-        logger.error(f"HTTP error occurred: {e}")
+        logger.error(f"HTTP error occurred: {e}. Could not authenticate with Coupa API")
         return False
     
     # Define the URL for PO update request
@@ -102,12 +103,12 @@ def update_coupa_po(po_id, po_body):
         logger.error(f"Request exception occurred: {e}. Could not update Purchase Order {po_id} in Coupa")
         return False
 
-def cancel_coupa_po(po_id, po_body):
+def cancel_coupa_po(po_id: int, po_body: dict) -> bool:
     # Authenticate with Coupa API
     try:
         token = get_access_token()
     except requests.HTTPError as e:
-        logger.error(f"HTTP error occurred: {e}")
+        logger.error(f"HTTP error occurred: {e}. Could not authenticate with Coupa API")
         return False
     
     # Define the URL for PO cancel request
@@ -132,12 +133,12 @@ def cancel_coupa_po(po_id, po_body):
         logger.error(f"Request exception occurred: {e}. Could not cancel Purchase Order {po_id} in Coupa")
         return False
 
-def close_coupa_po(po_id, po_body):
+def close_coupa_po(po_id: int, po_body: dict) -> bool:
     # Authenticate with Coupa API
     try:
         token = get_access_token()
     except requests.HTTPError as e:
-        logger.error(f"HTTP error occurred: {e}")
+        logger.error(f"HTTP error occurred: {e}. Could not authenticate with Coupa API")
         return False
     
     # Define the URL for PO close request
